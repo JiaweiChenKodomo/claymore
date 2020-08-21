@@ -12,8 +12,9 @@
 
 decltype(auto) load_model(std::size_t pcnt, std::string filename) {
   std::vector<std::array<float, 3>> rawpos(pcnt);
-  auto addr_str = std::string(AssetDirPath) + "MpmParticles/";
-  auto f = fopen((addr_str + filename).c_str(), "rb");
+  //auto addr_str = std::string(AssetDirPath) + "MpmParticles/";
+  //auto f = fopen((addr_str + filename).c_str(), "rb");
+  auto f = fopen((filename).c_str(), "rb");
   std::fread((float *)rawpos.data(), sizeof(float), rawpos.size() * 3, f);
   std::fclose(f);
   return rawpos;
@@ -72,6 +73,11 @@ void init_models(
       }
     }
   } break;
+  case 4: {
+      models[0] = load_model(775196, "dragon_particles.bin");
+      break;
+  }
+      
   default:
     break;
   }
@@ -86,11 +92,13 @@ int main() {
 
   auto benchmark = std::make_unique<mgsp_benchmark>();
   /// init
-  init_models(models, 3);
+  init_models(models, 4);
 
   for (int did = 0; did < g_device_cnt; ++did)
     benchmark->initModel(did, models[did]);
   // benchmark->initBoundary("candy_base");
+
+  getchar();
 
   benchmark->main_loop();
   ///
